@@ -33,8 +33,19 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Docker Build Image
-        run: ./gradlew bootBuildImage --imageName=seongbin9786/test_github_actions
+        run: sudo ./gradlew bootBuildImage --imageName=seongbin9786/test_github_actions
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: docker push seongbin9786/test_github_actions
+
+      - name: Login to EC2 and execute commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_KEY }}
+          port: ${{ secrets.AWS_EC2_PORT }}
+          script: |
+           cd ~
+           echo hello >> hello.txt
